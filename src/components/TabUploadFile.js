@@ -1,5 +1,14 @@
 import React from "react";
-import { Alert, AlertTitle, Box, Button, Grid, Snackbar, Stack } from "@mui/material";
+import {
+    Alert,
+    AlertTitle,
+    Autocomplete,
+    Box,
+    Button,
+    Grid,
+    Stack,
+    TextField,
+} from "@mui/material";
 import DownloadJSONButton from "./DownloadJson";
 import { Close } from "@mui/icons-material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -12,12 +21,36 @@ export default function TabUploadFile(props) {
     const nextSection = () => {
         if (file) {
             if (file.type === "text/csv") {
-                props.setSection(3); // <-- pasa a la seccion 3
+                if (props.typePlantilla === "") {
+                    props.setSnackbar({
+                        open: true,
+                        message: "Debe seleccionar un tipo de plantilla",
+                        severity: "error",
+                    });
+                } else {
+                    if (props.category === "EPK" && props.typeDocument === "") {
+                        props.setSnackbar({
+                            open: true,
+                            message: "Debe ingresar un tipo de documento",
+                            severity: "error",
+                        });
+                    } else {
+                        props.setSection(3); // <-- pasa a la seccion 3
+                    }
+                }
             } else {
-                props.setSnackbar({ open: true, message: "El archivo debe ser de tipo CSV", severity: "error" });
+                props.setSnackbar({
+                    open: true,
+                    message: "El archivo debe ser de tipo CSV",
+                    severity: "error",
+                });
             }
         } else {
-            props.setSnackbar({ open: true, message: "Debe subir un archivo", severity: "error" });
+            props.setSnackbar({
+                open: true,
+                message: "Debe subir un archivo",
+                severity: "error",
+            });
         }
     };
     // regresa a la seccion anterior
@@ -38,7 +71,7 @@ export default function TabUploadFile(props) {
         reader.onload = event => {
             const csvData = event.target.result;
             const jsonData = [];
-            const lines = csvData.split("\n");
+            const lines = csvData.split("\r\n");
             const headers = lines[0].split(",");
 
             for (let i = 1; i < lines.length; i++) {
@@ -90,6 +123,46 @@ export default function TabUploadFile(props) {
                 </strong>
             </p>
             <p>Carga el archivo que contiene la data:</p>
+
+            <Stack direction="row" justifyContent="flex-start" spacing={2}>
+                {/* combox para el tipo de plantilla */}
+                <Autocomplete
+                    id="combo-box-demo"
+                    options={[
+                        { title: "WMS" },
+                        { title: "SAK" },
+                        { title: "BigCommerce" },
+                    ]}
+                    onChange={(event, newValue) => {
+                        if (newValue) {
+                            props.setTypePlantilla(newValue.title);
+                        }
+                    }}
+                    getOptionLabel={option => option.title}
+                    isOptionEqualToValue={(option, value) =>
+                        option.title === value.title
+                    }
+                    style={{ width: 300, marginBottom: "1rem" }}
+                    renderInput={params => (
+                        <TextField
+                            {...params}
+                            label="Plantilla"
+                            variant="outlined"
+                        />
+                    )}
+                />
+
+                {/* seccion para subir el archivo */}
+                {props.category === "EPK" && (
+                    <TextField
+                        id="outlined-basic"
+                        label="Tipo de documento"
+                        variant="outlined"
+                        onChange={e => props.setTypeDocument(e.target.value)}
+                    />
+                )}
+            </Stack>
+
             {file ? ( // <-- si hay un archivo subido, muestra el nombre y el boton de eliminar
                 <Grid // <-- seccion para mostrar el archivo subido
                     container
@@ -210,6 +283,7 @@ export default function TabUploadFile(props) {
                         Puedes utilizar tambien nuestra plantilla para organizar
                         toda la data.
                     </p>
+
                     <DownloadJSONButton // <-- componente para descargar plantilla
                         fileName="ArchivoJson.json" // <-- nombre del archivo
                         jsonContent={props.dataJson}

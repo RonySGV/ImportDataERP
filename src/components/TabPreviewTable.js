@@ -5,7 +5,7 @@ import BasicTable from "./BasicTable";
 import { postEPK } from "./Requests";
 
 const PreviewTable = (props) => {
-    const { dataJson , category } = props;
+    const { dataJson , category ,typePlantilla , typeDocument  } = props;
 
     // go to previous section
     const prevSection = () => {
@@ -13,7 +13,14 @@ const PreviewTable = (props) => {
     };
     // la data se envia al backend y se vuelve a la seccion inicial
     const finishSection = async () => {
-        const response = await postEPK({ [category]:dataJson});
+        let response;
+        // si la categoria es EPK se envia  el tipo de documento
+        if (category === "EPK") {
+            response = await postEPK({ [category]:{[typePlantilla]:dataJson} , typeDocument });
+        }else{
+            response = await postEPK({ [category]:{[typePlantilla]:dataJson} });
+        }
+
         console.log(response);
         if (response?.status === 200) {
             props.setSnackbar({

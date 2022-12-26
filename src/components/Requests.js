@@ -8,16 +8,16 @@ import axios from 'axios'
 //import GetToken from '../components/users/GetToken'
 
 // Startpoint
-const API_AXS = "https://backweb.copernicowms.com"
+const API_AXS = "http://127.0.0.1:8000/importdata"
 
 // Get token
-const tokn = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6OTEsImV4cCI6MTY3MTgzMjU3OCwiaWF0IjoxNjcxODI4OTc4LCJkYXRhYmFzZSI6ImRlc2Fycm9sbG8iLCJ3YXJlaG91c2UiOiIwMSIsImlzX3N0YWZmIjp0cnVlLCJhY3Rpdml0aWVzIjoiMSIsImlkX2VtcGxveWVlIjoiNTAifQ.qhm-ljtm93n7AUNPaeGvkvabG8nXZ_--5hnyCaW9ovQ"
+const tokn = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6OTEsImV4cCI6MTY3MjA2NDA3NCwiaWF0IjoxNjcyMDYwNDc0LCJkYXRhYmFzZSI6ImRlc2Fycm9sbG8iLCJ3YXJlaG91c2UiOiIwMSIsImlzX3N0YWZmIjp0cnVlLCJhY3Rpdml0aWVzIjoiMSIsImlkX2VtcGxveWVlIjoiNTAifQ.zWpMzbOHlubdxqUhnG6A46EeQ0upUo_M3Lgl3Wha-iA"
 
 
 // Adiciona un registro de EPK 
 export async function postEPK(getform) {
 	try {
-		const url = API_AXS + '/pruebas'
+		const url = API_AXS 
 
 		const config = {
 			headers: {
@@ -38,7 +38,6 @@ export async function postEPK(getform) {
 
 // Consulta un registro de EPK - DPK
 export async function getEPK(getform) {
-	console.log(API_AXS);
 	try {
 		const url = API_AXS + '/epk/epk'
 

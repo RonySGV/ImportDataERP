@@ -18,6 +18,10 @@ const ImportDataERP = () => {
     // Estado para guardar la categoria de la data a importar
     const [category, setCategory] = useState("")
 
+    // Estado para guardar el tipo de plantilla y documento a importar
+    const [typePlantilla, setTypePlantilla] = useState("")
+    const [typeDocument, setTypeDocument] = useState("")
+
     return (
         <div>
             <Container maxWidth="100vw" style={{ fontSize: "1.2em" }}>
@@ -63,6 +67,10 @@ const ImportDataERP = () => {
                                 setSnackbar={setSnackbar}
                                 setCategory={setCategory}
                                 category={category}
+                                setTypePlantilla={setTypePlantilla}
+                                typePlantilla={typePlantilla}
+                                setTypeDocument={setTypeDocument}
+                                typeDocument={typeDocument}
                             />
                         )}
                         {section === 3 && (
@@ -73,6 +81,8 @@ const ImportDataERP = () => {
                                 setSnackbar={setSnackbar}
                                 setCategory={setCategory}
                                 category={category}
+                                typePlantilla={typePlantilla}
+                                typeDocument={typeDocument}
                             />
                         )}
                         {/* snackbar para mostrar mensajes */}

@@ -37,7 +37,6 @@ const TabSelectCategory = ( props ) => {
                     isOptionEqualToValue={(option, value) =>
                         option.title === value.title
                     }
-                    //value={category}
                     onChange={(event, newValue) => {
                         setCategory(newValue.title);
                     }}
