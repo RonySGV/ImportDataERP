@@ -13,6 +13,7 @@ import DownloadJSONButton from "./DownloadJson";
 import { Close } from "@mui/icons-material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import {ConvertImportToJson} from "./ConvertImportToJson";
 
 export default function TabUploadFile(props) {
     const [file, setFile] = React.useState(null);
@@ -20,7 +21,11 @@ export default function TabUploadFile(props) {
     // si hay un archivo subido, pasa a la siguiente seccion
     const nextSection = () => {
         if (file) {
-            if (file.type === "text/csv") {
+            if (
+                file.type === "text/csv" ||
+                file.type ===
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ) {
                 if (props.typePlantilla === "") {
                     props.setSnackbar({
                         open: true,
@@ -39,6 +44,7 @@ export default function TabUploadFile(props) {
                     }
                 }
             } else {
+                console.log(file.type);
                 props.setSnackbar({
                     open: true,
                     message: "El archivo debe ser de tipo CSV",
@@ -63,30 +69,11 @@ export default function TabUploadFile(props) {
     const handleFile = e => {
         e.preventDefault();
         setFile(e.target.files[0]);
-        convertToJsonObject(e.target.files[0]);
-    };
-    // funcion para convertir el archivo csv a json
-    const convertToJsonObject = file => {
-        const reader = new FileReader();
-        reader.onload = event => {
-            const csvData = event.target.result;
-            const jsonData = [];
-            const lines = csvData.split("\r\n");
-            const headers = lines[0].split(",");
-
-            for (let i = 1; i < lines.length; i++) {
-                const obj = {};
-                const currentline = lines[i].split(",");
-
-                for (let j = 0; j < headers.length; j++) {
-                    obj[headers[j]] = currentline[j];
-                }
-
-                jsonData.push(obj);
-            }
-            props.setDataJson(jsonData); // <-- setea al estado el contenido convertido
-        };
-        reader.readAsText(file);
+        ConvertImportToJson(
+            e.target.files[0],
+            props.setDataJson,
+            props.setSnackbar
+        ); // <-- convierte el archivo y xlsx csv a json
     };
 
     // funcion para eliminar el archivo subido
@@ -98,9 +85,11 @@ export default function TabUploadFile(props) {
     const onDrop = e => {
         e.preventDefault();
         setFile(e.dataTransfer.files[0]);
-        if (e.dataTransfer.files[0].type === "text/csv") {
-            convertToJsonObject(e.dataTransfer.files[0]);
-        }
+        ConvertImportToJson(
+            e.dataTransfer.files[0],
+            props.setDataJson,
+            props.setSnackbar
+        ); // <-- convierte el archivo csv y xlsx a json
     };
     // funcion para evitar que el archivo se abra en el navegador
     const onDragOver = e => {
@@ -243,7 +232,7 @@ export default function TabUploadFile(props) {
 
                     <input
                         hidden
-                        accept=".csv"
+                        accept=".csv , .xls, .xlsx"
                         type="file"
                         onChange={handleFile}
                     />
